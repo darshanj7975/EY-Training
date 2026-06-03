@@ -1,0 +1,86 @@
+1. Features that can be implemented for LinkedIn Profiles/Feeds using Azure Blob Storage
+
+Azure Blob Storage is best suited for storing unstructured data (images, videos, documents, and files). For a LinkedIn-like application, the following features can leverage Blob Storage:
+
+Profile Features
+Profile pictures
+Cover/Banner images
+Resume uploads (PDF, DOCX)
+Certifications and achievement documents
+Portfolio images and videos
+Company logos
+
+Feed Features
+Image posts
+Video posts
+Document sharing (PDFs, presentations)
+
+Messaging Features
+Chat attachments
+Voice notes
+Shared documents and images
+
+Example Storage Structure
+profiles/user123/profile.jpg
+profiles/user123/banner.jpg
+resumes/user123/resume.pdf
+certificates/user123/azure-cert.pdf
+posts/post456/image1.jpg
+posts/post456/video.mp4
+
+Features NOT Suitable for Blob Storage
+
+These should be stored in Azure SQL or Cosmos DB:
+
+User profile information (name, email, headline)
+Connections and followers
+Likes and comments
+Feed text content
+Skills and endorsements
+Job history and education
+Message text
+
+
+2.Choosing Between AWS S3 and Azure Blob Storage
+
+AWS S3 Pros
+Industry-leading object storage service
+Mature ecosystem and global adoption
+Advanced lifecycle management
+Strong integration with AWS analytics services
+Excellent performance at very large scale
+
+AWS S3  Cons
+Additional complexity when integrated with Azure services
+Separate identity and access management model
+Higher operational overhead in Azure-centric environments
+
+Azure Blob Storage  Pros
+Native integration with Azure services
+Seamless authentication through Microsoft Entra ID
+Easy integration with Azure SQL, Cosmos DB, AKS, and Data Factory
+Strong security using Managed Identities and SAS tokens
+Simplified architecture for Azure-hosted applications
+
+Azure Blob Storage Cons
+Smaller ecosystem compared to AWS S3
+Some advanced storage features may arrive later than AWS
+
+
+Selected Storage: Azure Blob Storage
+Reasoning
+
+The LinkedIn-like application is being designed within the Azure ecosystem. Azure Blob Storage is the better choice because:
+
+Direct integration with Azure services such as:
+Microsoft Azure Blob Storage
+Microsoft Azure
+Microsoft Azure
+Microsoft Azure
+Simplified authentication using Microsoft Entra ID and Managed Identities.
+Lower operational complexity because all services remain within the same cloud platform.
+Cost-effective and highly scalable for storing profile images, videos, resumes, certificates, and feed media.
+High availability and built-in redundancy options.
+
+Conclusion:
+For implementing LinkedIn profiles and feeds, Azure Blob Storage should be used to store all media content (images, videos, documents, attachments), while Azure SQL Database or Cosmos DB should store structured application data such as profiles, connections, likes, comments, and feed metadata. This architecture provides scalability, security, and seamless integration across the Azure platform.
