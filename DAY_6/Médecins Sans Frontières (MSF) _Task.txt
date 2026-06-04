@@ -1,0 +1,74 @@
+A. Problem Statement
+Médecins Sans Frontières (MSF) operates medical programs in more than 70 countries and collects data from 400 field sites. The organization requires a centralized data platform that consolidates patient intake forms, drug inventory logs, outbreak reports, and staff deployment records into a central analytics environment at Geneva headquarters.
+
+B. Proposed Architecture
+Field Sites (400 Locations)
+        |
+        v
+Google Cloud Storage (Raw Zone)
+        |
+        v
+Data Processing Layer (Dataflow / Dataproc)
+        |
+        +--> Data Standardization
+        |
+        +--> Data Anonymization
+        |
+        v
+Google Cloud Storage (Curated Zone)
+        |
+        v
+BigQuery
+        |
+        v
+Analytics and Reporting Team (Geneva)
+
+C. Design Decisions
+
+1. Batch Ingestion: Daily CSV uploads are sufficient because the business can tolerate up to 24 hours of latency. Real-time streaming is unnecessary.
+
+2. Raw Data Storage: All uploaded files are stored in a raw Google Cloud Storage bucket. This preserves original data for auditing and recovery.
+
+3. Data Standardization: Different field sites use different column names, languages, and date formats. A processing layer standardizes all files into a common schema.
+Example: PatientName ,Name,NomPatient becomes patient_name
+
+4. Data Anonymization: Patient names and precise GPS coordinates are removed or masked before loading data into BigQuery.
+Example: Before:
+Name = John Smith
+GPS = 12.1234,45.9876
+After: PatientID = HASH123
+Region = District_A 
+This protects patients and staff operating in conflict zones.
+
+5. Curated Storage:Processed data is stored in optimized formats such as Parquet before loading into BigQuery.
+
+6. Analytics Layer
+BigQuery provides scalable SQL analytics for:
+- Disease outbreak monitoring
+- Drug supply forecasting
+- Staff deployment analysis
+- Ad-hoc investigations
+
+D. Example Processing Logic
+    read file
+    standardize column names
+    convert dates to standard format
+    remove duplicate records
+    anonymize patient information
+    write cleaned data to curated_bucket
+    load curated data into BigQuery
+
+E. Security Measures
+
+- Encryption in transit and at rest.
+- Role-based access control using IAM.
+- Removal of personally identifiable information.
+- Audit logging of data access activities.
+- Restricted access to sensitive datasets.
+
+F. Expected Benefits
+- Unified analytics platform for all field sites.
+- Protection of sensitive patient information.
+- Flexible reporting and ad-hoc analysis.
+- Scalable architecture supporting future growth.
+- Cost-effective batch processing model.
