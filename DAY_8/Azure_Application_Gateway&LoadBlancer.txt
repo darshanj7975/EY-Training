@@ -1,0 +1,12 @@
+
+
+Azure Application Gateway and Azure Load Balancer.
+
+
+| # | Requirement                   | Classification          | Reason                                                                                                   
+| 1 | Patient web portal            | **Application Gateway** | Public web application using HTTP/HTTPS, may need SSL termination and WAF.                               |
+| 2 | Clinical API (internal)       | **Application Gateway** | HTTP/HTTPS API, can benefit from Layer 7 routing and security policies.                                  |
+| 3 | DICOM image streaming         | **Load Balancer**       | DICOM is typically not standard HTTP web traffic; Layer 4 traffic distribution is sufficient.            |
+| 4 | Auth service (header routing) | **Application Gateway** | Requires header-based routing, a Layer 7 feature.                                                        |
+| 5 | Legacy SOAP lab service       | **Load Balancer**       | SOAP services are often treated as backend protocol traffic where simple Layer 4 distribution is enough. |
+| 6 | Admin dashboard (hostname)    | **Application Gateway** | Requires hostname-based routing (e.g., admin.company.com).                                               |

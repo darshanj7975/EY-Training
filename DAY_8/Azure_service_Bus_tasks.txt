@@ -1,0 +1,17 @@
+ Integration                 | Queue / Bus   | Reason                                                               
+ 
+ Settlement command          | **Queue**     | It's a command/task that should be processed by exactly one service. 
+ Payment received broadcast  | **Bus**       | Multiple services may need to react to the payment event.            
+ SMS / Push notifications    | **Queue**     | A notification task is handled by one notification service.          
+ Fraud score request         | **Queue**     | A specific service must process the request and return a result.     
+ Account state change events | **Bus**       | Many services may need to know when an account state changes.        
+ End-of-day reconciliation   | **Queue**     | A batch job/task processed by one reconciliation service.  
+
+
+
+Settlement comand 
+
+Payment Service sends "Settle Transaction" command.
+Message goes to Settlement Queue.
+One Settlement Worker picks it up.
+Updates database and marks settlement complete.    
