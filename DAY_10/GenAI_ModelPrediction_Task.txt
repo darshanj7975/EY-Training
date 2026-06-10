@@ -1,0 +1,104 @@
+CARD A – MULTILINGUAL EMAIL TRIAGE
+
+GenAI Type:
+Text Generation 
+
+Description:
+- Read emails in multiple languages
+- Categorize and route automatically
+- Detect priority and customer intent
+
+Recommended Model:
+- Claude 3.5 Sonnet
+- GPT-4o
+
+NexaBank Domain:
+Customer Service
+
+
+CARD B – REGULATORY UPDATE REVIEW
+
+GenAI Type:
+RAG (Retrieval-Augmented Generation) + Summarization
+
+Description:
+- Extract key regulatory changes
+- Compare updates with existing policies
+- Generate compliance summaries
+
+Recommended Model:
+- Claude 3.5 Sonnet + RAG
+- GPT-4o + RAG
+
+NexaBank Domain:
+Compliance
+
+
+CARD C – FRAUD ALERT NARRATIVES
+
+GenAI Type:
+Text Generation
+
+Description:
+- Convert fraud signals into customer-friendly explanations
+- Generate transaction decline narratives
+- Provide alerts within minutes
+
+Recommended Model:
+- Claude 3.5 Sonnet
+- GPT-4o
+
+NexaBank Domain:
+Fraud Detection
+
+
+CARD D – SYNTHETIC FRAUD TRAINING DATA
+
+GenAI Type:
+Synthetic Data Generation
+
+Description:
+- Generate realistic fraud samples
+- Avoid using real customer PII
+- Improve fraud detection model training
+
+Recommended Model:
+- GAN (Generative Adversarial Network)
+- Haiko
+
+NexaBank Domain:
+Fraud Detection
+
+CARD E – PERSONALISED MARKETING COPY
+
+GenAI Type:
+Marketing Content Generation
+
+Description:
+- Generate A/B testing variants
+- Personalize campaigns by customer segment
+- Create marketing content at scale
+
+Recommended Model:
+- Claude 3.5 Sonnet
+-  GPT-4o
+
+NexaBank Domain:
+Growth / Marketing
+
+CARD F – DEVELOPER BOILERPLATE GENERATION
+
+GenAI Type:
+Code Generation
+
+Description:
+- Generate API integration templates
+- Create boilerplate code
+- Generate unit tests and documentation
+
+Recommended Model:
+- Copilot 
+- Alternative: Code Llama / GPT-4o
+
+NexaBank Domain:
+Engineering
