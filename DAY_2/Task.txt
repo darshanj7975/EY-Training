@@ -1,0 +1,8 @@
+| Use Case                  | Model Type                     | Primary Metric     | Why                                |
+| ------------------------- | ------------------------------ | ------------------ | ---------------------------------- |
+| Invoice Anomaly Detection | Isolation Forest / Autoencoder | Precision          | Avoid false fraud alerts           |
+| Spam Classification       | Classification                 | Recall             | Don't miss spam                    |
+| Deal Close Prediction     | XGBoost / Classification       | ROC-AUC or F1      | Handles imbalance                  |
+| Document Summarization    | LLM                            | ROUGE + Human Eval | Measures summary quality           |
+| Audit Report Translation  | Transformer NMT                | BLEU               | Measures translation quality       |
+| Revenue Forecasting       | Time Series                    | MAPE               | Business-friendly percentage error |
