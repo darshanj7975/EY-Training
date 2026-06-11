@@ -1,0 +1,26 @@
+Converting this into a GenAI Pipeline
+
+User uploads CSV
+      ↓
+Agent checks timestamps
+      ↓
+Detect missing dates
+      ↓
+Handle null values
+      ↓
+Generate plots
+      ↓
+Detect trend
+      ↓
+Detect seasonality
+      ↓
+Detect outliers
+      ↓
+Run stationarity tests
+      ↓
+Generate ACF/PACF
+      ↓
+Suggest ARIMA/SARIMA/Prophet
+      ↓
+Create EDA Report
+      

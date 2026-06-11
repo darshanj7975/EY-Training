@@ -1,0 +1,60 @@
+CoT prompt:
+
+You are an expert Data Scientist and Time-Series Analysis Specialist. Your task is to perform a rigorous, step-by-step Exploratory Data Analysis (EDA) on the provided dataset.
+
+To ensure the highest analytical depth, you must use a Chain of Thought (CoT) approach. For EVERY step below, you must explicitly output your thoughts using this structure:
+
+**[Hypothesis/Objective]:** What are we trying to find or verify in this step?
+
+**[Reasoning & Approach):** Why is this the correct statistical or visual approach for this specific
+
+time-series data?
+
+**[Python Code/Action):** The code or execution steps required.
+
+**[Interpretation Guide]:** What would the resulting numbers or plots mean? How do we decide the next move based on them?
+
+### Step 1: Expected Flow & Data Profile
+
+**Task:** Walk through the metadata, look at the columns, identify the target variable, and map out the analytical blueprint.
+
+-**CoT Requirement:** Explicitly state the expected characteristics of this data based on its domain
+
+(e.g., "Since this is retail data, I expect strong weekend seasonality and a general upward trend...").
+
+###Step 2: Time Continuity Check (Missing Timestamps)
+**Task:** Check if the time index is strictly continuous based on its expected frequency (e.g.. hourly, daily, monthly). Identify any completely missing rows/timestamps.
+
+- **CoT Requirement:** Reason through how you will detect gaps (e.g., comparing the actual index against a complete 'pd.date_range"). Detail what a gap implies for this specific domain.
+
+### Step 3: Handle Missing Values (Imputation Strategy)
+
+Task** Identify null values within the existing rows and decide on an imputation strategy.
+
+** **CoT Requirement:** Do not just blindly drop or mean-impute. Reason through "why" a specific method (e.g., Forward Fill, Linear Interpolation, or Seasonal Imputation) is appropriate based on whether the data has strong seasonality or sudden trends.
+
+### Step 4: Series Plotting
+
+**Task:** Generate a clean, macro-level line plot of the entire time series.
+
+- **CoT Requirement:** Before plotting, state what visual cues you are actively hunting for (e.g. structural breaks, variance changes over time, or obvious cyclical waves).
+
+### Step 5: Deconstructive Detection
+
+Break the series down into its core components. Show your reasoning for each sub-step:
+
+**a) Trend** Use rolling statistics or decomposition (e.g., STL or classical decomposition) to isolate the long-term direction. Reason about whether the trend looks linear or non-linear.
+
+-**b) Seasonality.** Analyze repeating patterns using ACF/PACF plots or seasonal subseries plots.
+
+State your hypothesis on the seasonal period (e.g, 7 days for weekly patterns, 365 days for annual).
+
+**c) Outliers: Detect anomalies using statistical thresholds (e.g., Rolling Z-Score or IQR ofof residuals). Explain your logic for distinguishing a true anomalous outlier from a natural seasonal
+
+peak or structural shift.
+
+###Step 6: Stationarity Check
+
+-**Task:** Run formal statistical tests for stationarity (e.g., Augmented Dickey-Fuller (ADF) or KPSS test).
+
+-**CoT Requirement:** Clearly state your Null ($H_0$) and Alternative ($H_15) hypotheses. Explain exactly how you will interpret the p-value and critical values, and outline the exact logical steps you will take if the series proves to be non-stationary (e.g., first-order differencing, log transformations).
