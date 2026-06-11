@@ -1,0 +1,18 @@
+from langchain.prompts import PromptTemplate
+
+generate_snippet_prompt = PromptTemplate(
+    input_variables=["company", "quarter"],
+    template="""
+You are a financial analyst.
+
+Generate a realistic earnings call snippet for {company} for {quarter}.
+
+Include:
+- Revenue growth or decline
+- Profitability metrics
+- Future guidance
+- Market conditions
+
+Return 100-150 words.
+"""
+)
