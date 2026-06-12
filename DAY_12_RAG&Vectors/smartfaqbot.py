@@ -17,7 +17,7 @@ from langchain_core.documents import Document
 from langchain_groq import ChatGroq
 
 # SET YOUR GROQ KEY
-os.environ["GROQ_API_KEY"] = "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"
+os.environ["GROQ_API_KEY"] = ""
 
 # FAQ DATASET
 faqs = [
