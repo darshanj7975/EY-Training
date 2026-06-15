@@ -1,0 +1,105 @@
+From the chart "RAG Pipeline Latency Waterfall – Per Stage Breakdown", the latency variation is not caused by embedding or retrieval.
+
+Observation
+
+The bars are split into:
+
+1. Embed query
+2. Azure retrieve
+3. Claude generate
+
+For Q1 and Q2:
+
+Total latency ≈ 700–900 ms
+
+For Q3:
+
+Total latency ≈ 9600 ms
+
+For Q6 and Q7:
+
+Total latency ≈ 7500–8000 ms
+Root Cause
+
+The green section (Claude generate) dominates the total latency.
+
+Approximate contribution:
+
+Stage	               Latency
+Embedding	     100–300 ms
+Azure Retrieval	     200–400 ms
+Claude Generation   400 ms – 9000 ms
+
+The generation step contributes more than 90% of total latency for slow queries.
+
+1. Different Output Lengths (Most Likely)
+
+If Q3 asks:
+
+"Summarize this 50-page document"
+
+Claude generates many tokens.
+
+If Q1 asks:
+
+"What is RAG?"
+
+Claude generates few tokens.
+
+More output tokens ⇒ higher latency.
+
+2. Retrieved Context Size
+
+If Azure Search returns:
+
+2 chunks
+
+vs
+
+15 chunks
+
+Claude receives more input.
+
+Large context means:
+
+More prompt tokens
+Longer attention computation
+Higher latency
+3. Complex Reasoning
+
+Questions requiring:
+
+Comparison
+Multi-hop reasoning
+Summarization
+Analysis
+
+take longer than:
+
+Fact lookup
+Definition questions
+4. Claude API Queue / Network Variability
+
+Cloud LLMs sometimes show:
+
+Request A → 4 sec
+Request B → 8 sec
+Request C → 5 sec
+
+even with similar prompts.
+
+Reasons:
+
+Server load
+Shared inference capacity
+Rate limiting
+
+Conclusion:
+The latency spikes in Q3, Q5, Q6, and Q7 are primarily caused by Claude response generation time, likely due to:
+
+Larger retrieved context,
+Longer generated answers,
+More complex reasoning tasks,
+Normal LLM inference variability.
+
+Embedding and Azure retrieval appear relatively stable and are not the main source of latency variation in this chart.
