@@ -1,0 +1,56 @@
+Framework Chosen:
+
+LangChain + LlamaIndex
+
+LangChain → Email classification, workflow orchestration, API/tool calling, escalation logic.
+LlamaIndex → Retrieval of policy documents and knowledge-base search.
+
+Step 1:
+Email Ingestion & Classification
+
+Incoming customer email enters the system.
+LangChain classifies it into categories:
+Delivery Delay
+Damaged Package
+Refund Request
+Tracking Issue
+General Inquiry
+
+Step 2:
+Retrieve Relevant Policies
+
+Based on the category, LlamaIndex searches the logistics policy knowledge base.
+Retrieves relevant SOPs, refund rules, shipping policies, and escalation guidelines.
+
+Step 3:
+Generate Draft Reply (RAG)
+
+LangChain sends:
+Customer email
+Retrieved policy documents
+Company response template to LLM
+LLM generates a draft response with citations from the policy documents.
+
+Step 4:
+Human Escalation via Ticketing API
+LangChain agent evaluates:
+Confidence score
+Sentiment
+Complexity
+If complex:
+Create ticket via ServiceNow/Zendesk/Jira API.
+Route to human support agent.
+
+If complex:
+Create ticket via ServiceNow/Zendesk/Jira API.
+Route to human support agent.
+Otherwise:
+Send draft response automatically.
+
+Justification:
+
+LangChain excels at multi-step workflows, tool calling, agents, and API integrations.
+LlamaIndex is optimized for retrieval over large document repositories and knowledge bases.
+The combination enables a scalable RAG pipeline for 10,000+ emails per day.
+Human-in-the-loop escalation improves reliability for edge cases.
+Retrieved policy documents reduce hallucinations and improve response accuracy.
