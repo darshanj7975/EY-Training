@@ -37,7 +37,7 @@ from dataclasses import dataclass, field
 
 import torch
 import numpy as np
-import pandas as pd
+import pandas as pd # Added pandas import
 import matplotlib.pyplot as plt
 import spacy
 
@@ -62,6 +62,9 @@ if SIMULATION_MODE:
     print("   Set OPENAI_API_KEY environment variable to use real GPT-4o.")
 else:
     print(f"✅ OpenAI API key detected — live mode enabled.")
+
+print("Re-installing LlamaIndex and related packages to ensure availability...")
+!pip install llama-index llama-index-embeddings-huggingface llama-index-llms-openai --quiet
 
 # Synthetic RBI / FinanceGuard policy corpus
 POLICY_DOCS = [
@@ -698,3 +701,308 @@ if len(answered) > 0:
 
 plt.tight_layout()
 plt.show()
+
+from llama_index.core import VectorStoreIndex, Document as LIDocument, Settings
+from llama_index.embeddings.huggingface import HuggingFaceEmbedding
+from llama_index.core.node_parser import SentenceSplitter
+from llama_index.core.evaluation import FaithfulnessEvaluator
+
+print("Building LlamaIndex knowledge base...")
+
+# Configure embeddings (no OpenAI required)
+Settings.embed_model = HuggingFaceEmbedding(model_name='BAAI/bge-small-en-v1.5')
+Settings.llm = None  # We'll handle LLM separately
+
+li_documents = [
+    LIDocument(text=doc['content'], metadata={'title': doc['title'], 'id': doc['id']})
+    for doc in POLICY_DOCS
+]
+
+li_index = VectorStoreIndex.from_documents(
+    li_documents,
+    transformations=[SentenceSplitter(chunk_size=400, chunk_overlap=50)]
+)
+
+li_retriever = li_index.as_retriever(similarity_top_k=3)
+
+print("✅ LlamaIndex index built")
+
+# Compare retrieval between LangChain FAISS and LlamaIndex
+comparison_queries = [
+    "What is the minimum credit score for a loan?",
+    "What are the DPDP data retention rules?",
+    "How is EMI calculated?",
+]
+
+print("\n📊 RETRIEVAL COMPARISON — LangChain FAISS vs. LlamaIndex BGE")
+print("=" * 70)
+
+for q in comparison_queries:
+    # LangChain
+    lc_docs = retriever.get_relevant_documents(q)
+    lc_titles = [d.metadata.get('title', 'Unknown')[:40] for d in lc_docs]
+
+    # LlamaIndex
+    li_nodes = li_retriever.retrieve(q)
+    li_titles = [n.metadata.get('title', 'Unknown')[:40] for n in li_nodes]
+
+    print(f"\nQuery: {q}")
+    print(f"  LangChain: {lc_titles}")
+    print(f"  LlamaIndex: {li_titles}")
+    overlap = set(lc_titles) & set(li_titles)
+    print(f"  Overlap: {len(overlap)}/{max(len(lc_titles),len(li_titles))} docs")
+
+# LangGraph HITL pattern for high-value loans (> INR 10 lakhs)
+# Simulated here — in production this would trigger a real review workflow.
+
+from enum import Enum
+from dataclasses import dataclass
+from typing import Optional # Import Optional
+
+class ReviewDecision(Enum):
+    APPROVE  = "approve"
+    REJECT   = "reject"
+    ESCALATE = "escalate"
+
+@dataclass
+class LoanRequest:
+    application_id: str
+    loan_amount: float
+    applicant_summary: str
+    ai_recommendation: str
+    risk_score: float
+    review_required: bool = False
+    human_decision: Optional[ReviewDecision] = None
+    reviewer_id: Optional[str] = None
+    review_notes: Optional[str] = None
+
+
+class HITLWorkflow:
+    """
+    Human-in-the-loop workflow inspired by LangGraph patterns.
+    High-value or high-risk loans pause for human approval.
+    """
+    HIGH_VALUE_THRESHOLD = 1_000_000   # INR 10 lakhs
+    HIGH_RISK_SCORE      = 0.7
+    REVIEW_QUEUE         = []
+
+    def route(self, request: LoanRequest) -> str:
+        """Routing node — decides if human review is needed."""
+        if (request.loan_amount >= self.HIGH_VALUE_THRESHOLD or
+                request.risk_score >= self.HIGH_RISK_SCORE):
+            request.review_required = True
+            self.REVIEW_QUEUE.append(request)
+            return 'human_review'
+        return 'auto_process'
+
+    def human_review_node(self, request: LoanRequest,
+                          decision: ReviewDecision, reviewer: str, notes: str = ''):
+        """Simulates a human reviewer approving or rejecting the request."""
+        request.human_decision = decision
+        request.reviewer_id    = reviewer
+        request.review_notes   = notes
+        if request in self.REVIEW_QUEUE:
+            self.REVIEW_QUEUE.remove(request)
+        return request
+
+    def queue_status(self):
+        print(f"\n📋 REVIEW QUEUE STATUS: {len(self.REVIEW_QUEUE)} pending")
+        for r in self.REVIEW_QUEUE:
+            print(f"   [{r.application_id}] INR {r.loan_amount:,.0f} | Risk: {r.risk_score:.2f} | {r.applicant_summary[:50]}")
+
+
+# Simulate the HITL workflow
+hitl = HITLWorkflow()
+
+test_loans = [
+    LoanRequest('APP100301', 500_000,   'Salaried, credit score 720, DTI 30%', 'Likely approve', 0.25),
+    LoanRequest('APP100302', 1_500_000, 'Self-employed, credit score 660, DTI 45%', 'Borderline', 0.62),
+    LoanRequest('APP100303', 200_000,   'Salaried, credit score 580, DTI 55%', 'High risk', 0.82),
+    LoanRequest('APP100304', 800_000,   'Salaried, credit score 750, DTI 25%', 'Likely approve', 0.18),
+]
+
+print("\n🔄 LANGRAPH-STYLE HITL ROUTING")
+print("-" * 65)
+for loan in test_loans:
+    route = hitl.route(loan)
+    icon = "🔄" if route == 'human_review' else "⚡"
+    print(f"{icon} [{route.upper():14}] [{loan.application_id}] INR {loan.loan_amount:>12,.0f} | Risk: {loan.risk_score:.2f}")
+
+hitl.queue_status()
+
+# Simulate human reviews
+print("\n👤 Simulating human review decisions...")
+review_queue_copy = hitl.REVIEW_QUEUE.copy()
+for i, req in enumerate(review_queue_copy):
+    decision = ReviewDecision.APPROVE if req.risk_score < 0.70 else ReviewDecision.REJECT
+    hitl.human_review_node(req, decision, f'UNDERWRITER_{i+1:03d}', 'Manual review complete')
+    print(f"   [{req.application_id}] → {decision.value.upper()} by UNDERWRITER_{i+1:03d}")
+
+hitl.queue_status()
+
+# Cost comparison based on real 2025 pricing
+# Source: OpenAI pricing page + Fireworks AI / Together AI self-hosted estimates
+
+MODELS = [
+    {'name': 'GPT-4o',            'input': 2.50,  'output': 10.00, 'latency_ms': 800,  'type': 'API'},
+    {'name': 'GPT-4o-mini',       'input': 0.15,  'output': 0.60,  'latency_ms': 400,  'type': 'API'},
+    {'name': 'Gemini 1.5 Flash',  'input': 0.075, 'output': 0.30,  'latency_ms': 350,  'type': 'API'},
+    {'name': 'Llama-3-70B (API)', 'input': 0.59,  'output': 0.79,  'latency_ms': 600,  'type': 'API'},
+    {'name': 'Llama-3-8B (API)',  'input': 0.20,  'output': 0.20,  'latency_ms': 200,  'type': 'API'},
+    {'name': 'Llama-3-70B (GPU)', 'input': 0.40,  'output': 0.40,  'latency_ms': 900,  'type': 'Self-hosted'},
+]
+
+# Simulate 80,000 daily queries (FinanceGuard's actual volume)
+# Avg: 200 input tokens, 300 output tokens per query
+DAILY_QUERIES  = 80_000
+AVG_IN_TOKENS  = 200
+AVG_OUT_TOKENS = 300
+
+results = []
+for m in MODELS:
+    daily_input_cost  = (DAILY_QUERIES * AVG_IN_TOKENS  / 1_000_000) * m['input']
+    daily_output_cost = (DAILY_QUERIES * AVG_OUT_TOKENS / 1_000_000) * m['output']
+    daily_cost        = daily_input_cost + daily_output_cost
+    monthly_cost      = daily_cost * 30
+    results.append({**m, 'daily_cost_usd': daily_cost, 'monthly_cost_usd': monthly_cost})
+
+df_cost = pd.DataFrame(results)
+print("\n💰 COST BENCHMARK — 80,000 queries/day | 200 in + 300 out tokens")
+print(df_cost[['name', 'type', 'latency_ms', 'daily_cost_usd', 'monthly_cost_usd']].to_string(
+    index=False,
+    float_format=lambda x: f"${x:.0f}" if x > 1 else f"${x:.2f}"
+))
+
+# Visualise
+fig, ax = plt.subplots(figsize=(10, 5))
+colors = ['#0A9396' if t == 'API' else '#CA6702' for t in df_cost['type']]
+bars = ax.bar(df_cost['name'], df_cost['monthly_cost_usd'], color=colors, edgecolor='white')
+ax.set_title('Monthly Cost at FinanceGuard Scale (80k queries/day)', fontweight='bold')
+ax.set_ylabel('Monthly Cost (USD)')
+ax.set_xticklabels(df_cost['name'], rotation=20, ha='right')
+for bar, val in zip(bars, df_cost['monthly_cost_usd']):
+    ax.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 50, f'${val:,.0f}', ha='center', fontsize=9, fontweight='bold')
+from matplotlib.patches import Patch
+ax.legend(handles=[Patch(color='#0A9396', label='API'), Patch(color='#CA6702', label='Self-hosted')])
+plt.tight_layout()
+plt.show()
+
+gpt4o_cost = df_cost[df_cost['name'] == 'GPT-4o']['monthly_cost_usd'].values[0]
+llama_cost = df_cost[df_cost['name'] == 'Llama-3-8B (API)']['monthly_cost_usd'].values[0]
+print(f"\n💡 GPT-4o → Llama-3-8B saves ${gpt4o_cost - llama_cost:,.0f}/month ({(1 - llama_cost/gpt4o_cost):.0%} reduction)")
+
+# Full FastAPI application for CreditLens
+# To run: save as app.py and execute `uvicorn app:app --reload`
+
+fastapi_app_code = '''
+from fastapi import FastAPI, HTTPException, Request, Depends
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel, Field
+from typing import Optional
+import time
+from collections import defaultdict
+
+app = FastAPI(
+    title="CreditLens API",
+    description="FinanceGuard AI Credit Policy Assistant — with safety guardrails",
+    version="1.0.0"
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["https://financeGuard.internal"],
+    allow_credentials=True,
+    allow_methods=["POST"],
+    allow_headers=["*"],
+)
+
+# ── In-memory rate limiter ────────────────────────────────────
+RATE_LIMIT      = 30   # max requests per window
+WINDOW_SECONDS  = 60
+request_counts  = defaultdict(list)
+
+def rate_limit_check(request: Request):
+    client_ip = request.client.host
+    now = time.time()
+    window_start = now - WINDOW_SECONDS
+
+    # Prune old timestamps
+    request_counts[client_ip] = [
+        t for t in request_counts[client_ip] if t > window_start
+    ]
+
+    if len(request_counts[client_ip]) >= RATE_LIMIT:
+        raise HTTPException(
+            status_code=429,
+            detail=f"Rate limit exceeded: {RATE_LIMIT} requests per {WINDOW_SECONDS}s"
+        )
+    request_counts[client_ip].append(now)
+
+# ── Request / Response models ─────────────────────────────────
+class QueryRequest(BaseModel):
+    query: str = Field(..., min_length=5, max_length=1000,
+                       description="Natural language credit policy question")
+    user_id: str = Field(..., description="Loan officer employee ID")
+    application_context: Optional[str] = Field(None, description="Optional application ID for context")
+
+class QueryResponse(BaseModel):
+    query_id: str
+    response: str
+    action: str          # answered | blocked | redirected
+    latency_ms: float
+    pii_redacted: bool
+    safety_passed: bool
+
+# ── Endpoints ─────────────────────────────────────────────────
+@app.post("/v1/query", response_model=QueryResponse)
+async def query_creditlens(
+    body: QueryRequest,
+    _: None = Depends(rate_limit_check)
+):
+    result = pipeline.run(body.query, user_id=body.user_id)
+    m = result["metrics"]
+    return QueryResponse(
+        query_id=result["query_id"],
+        response=result["response"],
+        action=result["action"],
+        latency_ms=m.latency_ms,
+        pii_redacted=m.pii_redacted,
+        safety_passed=m.output_safety_safe
+    )
+
+@app.get("/health")
+def health(): return {"status": "ok", "service": "CreditLens"}
+
+@app.get("/v1/metrics")
+def get_metrics():
+    df = pipeline.metrics_dataframe()
+    if df.empty: return {"total": 0}
+    return {
+        "total_queries": len(df),
+        "block_rate": (df["final_action"] == "block").mean(),
+        "avg_latency_ms": df["latency_ms"].mean(),
+        "pii_redaction_rate": df["pii_redacted"].mean(),
+        "estimated_daily_cost_usd": df["estimated_cost_usd"].sum()
+    }
+'''
+
+print("FastAPI application code:")
+print(fastapi_app_code)
+
+# Save to file
+with open('creditlens_app.py', 'w') as f:
+    f.write('# CreditLens FastAPI App — run with: uvicorn creditlens_app:app --reload\n')
+    f.write('# Requires: pip install fastapi uvicorn\n\n')
+    f.write(fastapi_app_code)
+
+print("\n✅ Saved to creditlens_app.py")
+print("   Run with: uvicorn creditlens_app:app --reload --port 8000")
+
+# Install LlamaIndex + HuggingFace embedding dependencies
+
+!pip install -q \
+llama-index \
+llama-index-embeddings-huggingface \
+sentence-transformers \
+transformers \
+torch
