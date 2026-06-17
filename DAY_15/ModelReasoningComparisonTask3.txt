@@ -1,0 +1,78 @@
+
+Response From Haiku,
+
+Critical Clinical Issues
+1. Inadequate rule-out of acute coronary syndrome (ACS)
+
+Chest pain x 2 days is a classic ACS presentation
+Stable vitals + unremarkable exam do not exclude ACS — many MIs present this way
+EKG alone is insufficient — troponin is the standard of care for ruling out myocardial infarction
+Discharging without troponin is below the standard of care and exposes the patient to real harm
+
+2. Inappropriate discharge medication
+
+Ibuprofen for undifferentiated chest pain is not evidence-based
+No indication documented; pain duration and character not recorded
+No documented risk stratification (HEART score, TIMI, etc.)
+
+3. Vague follow-up plan
+
+"Follow up if symptoms worsen" is inadequate
+No clear safety-net instructions, no timeframe, no alternative contact method
+
+
+Documentation Red Flags
+The time pressure notation is the most damaging element:
+
+"Attending noted time pressure due to ED volume" documents that a clinical decision was influenced by operational/administrative pressure, not purely clinical judgment
+This is not a mitigating factor — it's an admission of compromised care
+If the patient returns with an MI, this note becomes powerful evidence of negligence
+
+Other documentation gaps:
+
+No differential diagnosis documented
+No reasoning for why troponin was omitted
+No risk assessment
+No shared decision-making with patient documented
+
+
+Liability & Patient Safety Summary
+RiskSeverityWhyMissed MICRITICALPatient discharged without troponin; could have active ischemiaSubstandard documentationHIGHTime pressure admission + incomplete reasoning = indefensibleInadequate discharge planHIGHVague instructions + no safety net
+
+What Should Have Happened
+
+Troponin ordered (rule out MI)
+Clear documentation of risk assessment and clinical reasoning
+Explicit safety-net instructions and follow-up timing
+No mention of time pressure in the medical record
+Consider observation if high-risk features present
+
+
+Response from Sonnet,
+The two most critical issues:
+
+No troponin ordered for 2-day chest pain — this is below standard of care for ACS rule-out. EKG alone is insufficient. This patient could have an active MI.
+The time pressure notation — documenting that ED volume influenced the decision is not a defense, it's an admission. It's the most legally damaging element in the note.
+
+Everything else (vague follow-up, ibuprofen without indication, no risk stratification, no differential) compounds those two.
+
+Response from Opus,
+Likely Summary
+Patient with 2-day history of chest pain underwent limited documented evaluation.
+Stable vitals and normal examination do not exclude serious cardiac pathology.
+EKG completed, but no troponin testing documented.
+Discharged with symptomatic treatment.
+Likely Risk Flags
+Clinical Risks
+Possible under-evaluation of acute coronary syndrome.
+Stable vitals do not rule out myocardial infarction.
+Reliance on EKG alone may be insufficient.
+
+Conclusion,
+For healthcare QA, medical chart review, utilization review, and risk-flagging applications:
+
+Best: Opus
+Best value: Sonnet
+Basic summarization: Haiku
+
+
