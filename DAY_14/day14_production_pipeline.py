@@ -998,11 +998,208 @@ with open('creditlens_app.py', 'w') as f:
 print("\n✅ Saved to creditlens_app.py")
 print("   Run with: uvicorn creditlens_app:app --reload --port 8000")
 
-# Install LlamaIndex + HuggingFace embedding dependencies
+!pip install -q langgraph
 
-!pip install -q \
-llama-index \
-llama-index-embeddings-huggingface \
-sentence-transformers \
-transformers \
-torch
+#Extension Task 2 Using LangGraph
+
+from typing import TypedDict, Optional
+from enum import Enum
+from langgraph.graph import StateGraph, END
+
+
+# ----------------------------
+# State
+# ----------------------------
+
+class ReviewDecision(Enum):
+    APPROVE = "approve"
+    REJECT = "reject"
+    ESCALATE = "escalate"
+
+
+class LoanState(TypedDict):
+    application_id: str
+    loan_amount: float
+    applicant_summary: str
+    ai_recommendation: str
+    risk_score: float
+
+    route: Optional[str]
+
+    human_decision: Optional[str]
+    reviewer_id: Optional[str]
+    review_notes: Optional[str]
+
+
+# ----------------------------
+# Nodes
+# ----------------------------
+
+def risk_router(state: LoanState):
+    """
+    Decision node:
+    Should AI process or ask human?
+    """
+
+    if (
+        state["loan_amount"] >= 1_000_000
+        or state["risk_score"] >= 0.7
+    ):
+        return {
+            "route": "human_review"
+        }
+
+    return {
+        "route": "auto_process"
+    }
+
+
+
+def auto_process(state: LoanState):
+    """
+    AI handles low-risk loans
+    """
+
+    print(
+        f"⚡ Auto processed {state['application_id']}"
+    )
+
+    return {
+        "human_decision": "AUTO_APPROVED"
+    }
+
+
+
+def human_review(state: LoanState):
+    """
+    Human reviewer node
+    """
+
+    print(
+        f"\n👤 Human review required: {state['application_id']}"
+    )
+
+    # Simulated human decision
+    if state["risk_score"] < 0.7:
+        decision = "APPROVED"
+    else:
+        decision = "REJECTED"
+
+
+    return {
+        "human_decision": decision,
+        "reviewer_id": "UNDERWRITER_001",
+        "review_notes": "Manual review completed"
+    }
+
+
+
+# ----------------------------
+# Build Graph
+# ----------------------------
+
+workflow = StateGraph(LoanState)
+
+
+workflow.add_node(
+    "router",
+    risk_router
+)
+
+workflow.add_node(
+    "auto_process",
+    auto_process
+)
+
+workflow.add_node(
+    "human_review",
+    human_review
+)
+
+
+workflow.set_entry_point("router")
+
+
+workflow.add_conditional_edges(
+    "router",
+    lambda state: state["route"],
+    {
+        "auto_process": "auto_process",
+        "human_review": "human_review"
+    }
+)
+
+
+workflow.add_edge(
+    "auto_process",
+    END
+)
+
+workflow.add_edge(
+    "human_review",
+    END
+)
+
+
+app = workflow.compile()
+
+
+
+# ----------------------------
+# Test
+# ----------------------------
+
+loans = [
+
+{
+"application_id":"APP100301",
+"loan_amount":500000,
+"applicant_summary":"Salary 720 score",
+"ai_recommendation":"Approve",
+"risk_score":0.25,
+"route":None,
+"human_decision":None,
+"reviewer_id":None,
+"review_notes":None
+},
+
+
+{
+"application_id":"APP100302",
+"loan_amount":1500000,
+"applicant_summary":"Self employed 660 score",
+"ai_recommendation":"Borderline",
+"risk_score":0.62,
+"route":None,
+"human_decision":None,
+"reviewer_id":None,
+"review_notes":None
+},
+
+
+{
+"application_id":"APP100303",
+"loan_amount":200000,
+"applicant_summary":"Low score customer",
+"ai_recommendation":"High risk",
+"risk_score":0.82,
+"route":None,
+"human_decision":None,
+"reviewer_id":None,
+"review_notes":None
+}
+
+]
+
+
+for loan in loans:
+
+    print("\n-------------------")
+
+    result = app.invoke(loan)
+
+    print(
+        "FINAL STATE:"
+    )
+
+    print(result)
