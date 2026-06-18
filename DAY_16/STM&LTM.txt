@@ -1,0 +1,13 @@
+| Domain      | STM                                | LTM                                |
+| ----------- | ---------------------------------- | ---------------------------------- |
+| Commute     | Current transport funding requests | Historical infrastructure spending |
+| Defence     | Current procurement requests       | Multi-year defence strategy        |
+| Agriculture | Current crop support needs         | Past subsidy and yield trends      |
+| Government  | Current department demands         | Historical operational expenditure |
+
+
+Summary:
+
+STM = current year's budgeting context and active planning information.
+LTM = historical budgets, policies, trends, regulations, and domain knowledge accumulated over multiple years.
+The Planner Agent combines both STM and LTM to generate a realistic annual budget allocation plan.
