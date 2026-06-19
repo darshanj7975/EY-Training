@@ -1,0 +1,135 @@
+SCENARIO 1 – THE UNDERSTAFFED MARKETING TEAM
+
+Framework: Flowise
+
+Why:
+Flowise provides a visual drag-and-drop, low/no-code interface that enables non-technical operations staff to build and maintain the customer-support routing workflow without engineering support.
+
+Block Diagram:
+
+Incoming Message
+|
+v
++---------------+
+|   Flowise     |
+| Routing Logic |
++---------------+
+|
++----+----+
+|    |    |
+v    v    v
+Refund Shipping Product
+Queue   Queue  Queue
+
+---
+
+SCENARIO 2 – THE RESEARCH-BRIEF ASSEMBLY LINE
+
+Framework: CrewAI
+
+Why:
+CrewAI is designed for structured, role-based multi-agent workflows where agents have defined responsibilities and sequential handoffs.
+
+Block Diagram:
+
+Researcher Agent
+|
+v
+Analyst Agent
+|
+v
+Writer Agent
+|
+v
+Editor Agent
+|
+v
+Final Brief
+
+---
+
+SCENARIO 3 – THE SELF-DEBUGGING DATA ANALYST
+
+Framework: AutoGen
+
+Why:
+AutoGen supports conversational multi-agent systems with code execution, allowing coder and critic agents to iteratively collaborate until the solution works.
+
+Block Diagram:
+
+```
+  +---------------+
+  | Coder Agent   |
+  +---------------+
+          |
+          v
+  Generate Code
+          |
+          v
+  Execute Code
+          |
+          v
+  Error/Result
+          |
+          v
+  +---------------+
+  | Critic Agent  |
+  +---------------+
+          |
+          |
+          +----------+
+                     |
+                     v
+              Coder Agent
+             (Repeat Loop)
+
+          |
+          v
+     Working Code
+```
+
+---
+
+SCENARIO 4 – THE REGULATED ENTERPRISE PLATFORM
+
+Framework: LangGraph
+
+Why:
+LangGraph provides stateful workflows, custom branching, checkpoints, human-in-the-loop approval, observability, tracing, and production-grade orchestration required for regulated enterprise systems.
+
+Block Diagram:
+
+```
+             User Query
+                  |
+                  v
+          Supervisor Agent
+                  |
+      +-----------+-----------+
+      |                       |
+      v                       v
+ Search Agent           RAG Retrieval
+                              |
+                              v
+                      Internal Knowledge
+                           Sources
+                              |
+                              v
+                       Writer Agent
+                              |
+                              v
+                     Human Approval
+                              |
+                       Approve/Reject
+                              |
+                              v
+                      Evaluator Agent
+                   (Guardrails/RAGAS)
+                              |
+                              v
+                     LangSmith Tracing
+                     Checkpoints/Resume
+                              |
+                              v
+                        Final Answer
+```
