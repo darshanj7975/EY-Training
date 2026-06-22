@@ -1,0 +1,204 @@
+Architecture Choice: Multi-Agent
+Justification
+It required multi agents like,
+Agent 1: Radiology Agent
+Agent 2: Clinical Decision Support Agent
+Agent 3: Scheduling Agent
+Agent 4: Communication Agent
+
+
+Block diagram
+                   Chest CT Scan
+                         |
+                         v
+                ┌─────────────────┐
+                │ Orchestrator    │
+                │ (LangGraph)     │
+                └────────┬────────┘
+                         |
+                         v
+          ┌────────────────────────────┐
+          │ Radiology Agent            │
+          │ Read CT + Draft Findings   │
+          └───────────┬────────────────┘
+                      |
+                      v
+          ┌────────────────────────────┐
+          │ Clinical CDS Agent         │
+          │ Check Medications          │
+          │ Contraindications          │
+          └───────────┬────────────────┘
+                      |
+                      v
+          ┌────────────────────────────┐
+          │ Scheduling Agent           │
+          │ Book PET/Biopsy in EMR     │
+          └───────────┬────────────────┘
+                      |
+                      v
+          ┌────────────────────────────┐
+          │ Communication Agent        │
+          │ GP Letter + Patient Note   │
+          └───────────┬────────────────┘
+                      |
+                      v
+                 Human Review
+                      |
+                      v
+                  Final Output
+
+
+Justification: The workflow spans four independent healthcare domains with different tools, permissions, and failure modes. The process is sequential with approval gates, making a LangGraph-style orchestrated multi-agent architecture ideal. Each specialized agent handles one responsibility, improving accuracy, auditability, maintainability, and regulatory compliance while enabling human review before final actions.
+
+Personalised product recommendation email
+Architecture Choice: Single Agent
+
+Justification:ll stages share the same user context, the workflow is linear, and there is a strict execution target of under 3 seconds per user. The coordination overhead of multiple agents would outweigh any benefit. A single orchestration service can execute recommendation generation, business-rule filtering, copywriting, and HTML assembly efficiently while maintaining low latency and high throughput across millions of users.
+
+Block diagram
+                    User Profile
+                 Purchase History
+                  Browse History
+                          |
+                          ▼
+
+            ┌─────────────────────────┐
+            │ Personalisation Agent   │
+            └────────────┬────────────┘
+                         │
+      ┌──────────────────┼──────────────────┐
+      │                  │                  │
+      ▼                  ▼                  ▼
+
+Collaborative      Business Rules      Copy Generator
+Filtering Model    - Out of Stock      Personalized Intro
+Top 10 Products    - Recent Purchase
+
+      └──────────────────┼──────────────────┘
+                         │
+                         ▼
+
+                HTML Email Builder
+                         │
+                         ▼
+
+                  Final Email HTML
+                         │
+                         ▼
+
+                   Email Service
+
+
+M&A due diligence on 800 contracts
+Architecture Choice: Multi-Agent
+
+                   800 Contracts
+                          |
+                          ▼
+
+             ┌──────────────────────┐
+             │ LangGraph            │
+             │ Orchestrator         │
+             └──────────┬───────────┘
+                        │
+
+      ┌─────────────────┼─────────────────┐
+      │                 │                 │
+
+      ▼                 ▼                 ▼
+
+Contract Agent 1   Contract Agent 2   Contract Agent N
+
+      │                 │                 │
+
+Extract Obligations Extract Obligations Extract Obligations
+Extract Risks       Extract Risks       Extract Risks
+
+      └─────────────────┼─────────────────┘
+                        │
+
+                        ▼
+
+          Regulatory Compliance Agent
+
+                        │
+
+                        ▼
+
+         Inter-Contract Dependency Agent
+
+                        │
+
+                        ▼
+
+          Executive Summary Agent
+
+                        │
+
+                        ▼
+
+        Risk Dashboard / Heat Map
+
+Justification
+
+The extraction phase is highly parallelizable because contracts are independent. Separate contract-analysis agents can process hundreds of documents simultaneously, helping meet the 4-hour SLA. After extraction, specialized synthesis agents perform regulatory review and cross-contract dependency analysis before generating an executive risk report. This combination of parallel processing and centralized synthesis is exactly where a multi-agent architecture provides significant advantages over a single-agent design.
+
+Incident triage and auto-remediation
+Architecture Choice: Multi-Agent
+                      Alert
+                        │
+                        ▼
+
+             ┌──────────────────┐
+             │ LangGraph        │
+             │ Orchestrator     │
+             └────────┬─────────┘
+                      │
+
+        ┌─────────────┼─────────────┐
+        │             │             │
+
+        ▼             ▼             ▼
+
+ Metrics Agent  Deployment Agent  Database Agent
+   Datadog       GitHub Actions      AWS RDS
+
+        └─────────────┼─────────────┘
+                      │
+                      ▼
+
+              RCA Agent
+                      │
+                      ▼
+
+           Confidence Score
+
+             ┌─────────────┐
+             │ > 80% ?     │
+             └──────┬──────┘
+                    │
+
+        ┌───────────┴───────────┐
+        │                       │
+
+       Yes                     No
+
+        │                       │
+
+        ▼                       ▼
+
+Remediation Agent      Human Approval
+(kubectl rollback)          Gate
+
+        └───────────┬───────────┘
+                    │
+                    ▼
+
+         Slack Communication Agent
+                    │
+                    ▼
+
+                RCA Posted
+
+Justifications:
+The incident requires multiple independent investigations that can execute concurrently across different systems (Datadog, GitHub Actions, AWS RDS). The workflow also contains a human-in-the-loop approval gate before remediation and uses distinct tool surfaces with separate permissions. A multi-agent architecture allows parallel diagnosis, centralized root-cause synthesis, controlled remediation, and structured incident communication, significantly reducing mean time to resolution (MTTR).
