@@ -1,0 +1,105 @@
+Scenario 1:
+
+Client adjuradication
+
+Graph flow
+
+This process has:
+
+Parallel execution of three independent checks:
+Fraud Screening
+Policy Coverage Check
+Medical Coding Review
+A synchronization/join step where all results are collected.
+A final decision node that uses the outputs from all three checks to approve or deny the claim.
+
+Visual flow
+           Claim
+              |
+      -----------------
+      |       |       |
+   Fraud   Coverage  Medical
+   Check    Check     Review
+      |       |       |
+      --------|--------
+              |
+      Decision Agent
+              |
+        Approve/Deny
+
+-------------------------------------------------------------------------------------------------------
+Scanrio 2.
+
+Buyers Research Agent
+
+Magentic
+This is an open-ended research problem where:
+
+The exact subtasks are not known beforehand.
+Agents may need to perform web searches, supplier research, trend analysis, and summarization.
+Multiple agents can collaborate, share findings, critique results, and refine the answer.
+The workflow emerges dynamically based on what is discovered.
+
+Visual flow
+                 User Request
+                        |
+                        v
+                 Coordinator Agent
+                        |
+        --------------------------------
+        |              |              |
+        v              v              v
+ Trend Research   Supplier Research   Market Data
+     Agent            Agent            Agent
+        |              |              |
+        ------- Share Findings --------
+                        |
+                        v
+                Discussion / Review
+                        |
+                        v
+                 Synthesis Agent
+                        |
+                        v
+                 Final Report
+--------------------------------------------------------------------------------------------------
+Scenario 3
+
+RFP Response builder.
+
+GraphFlow
+
+The process has a structured workflow with review loops:
+
+Technical Section Agent
+Pricing Section Agent
+Compliance Section Agent
+Timeline Section Agent
+Reviewer Agent
+If issues are found:
+Send Technical back for rework
+Or Pricing back for rework
+
+Visual flow
+Technical
+    ↓
+Pricing
+    ↓
+Compliance
+    ↓
+Timeline
+    ↓
+Reviewer
+    ↓
+ ┌───────────────┐
+ │ Changes Needed? │
+ └───────┬───────┘
+         │ Yes
+         ↓
+   Rework Section
+         ↓
+      Reviewer
+         │
+         No
+         ↓
+   Final Sign-off
