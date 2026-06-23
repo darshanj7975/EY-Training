@@ -1,0 +1,141 @@
+Conclusion of case study: MCP- centric multi-server, split across a seller-controlled boundary (SP-API + your cost data) and Amazon's boundary (official Ads server), with reads autonomous and anything touching money or PII gated.
+
+List the design decisions for each domain like discovery, authorizzation etc, and sketch a rough block diagram around your thinking process
+
+
+Rough block diagram
+
+                        User
+                          |
+                          v
+                +------------------+
+                | Input Guardrails |
+                +------------------+
+                          |
+                          v
+                +------------------+
+                | Orchestrator     |
+                | Agent            |
+                +------------------+
+                          |
+      -------------------------------------------------
+      |                     |                        |
+      v                     v                        v
+
++---------------+   +---------------+    +---------------+
+| Research      |   | Finance       |    | Campaign      |
+| Agent         |   | Agent         |    | Agent         |
++---------------+   +---------------+    +---------------+
+      |                     |                        |
+      -------------------------------------------------
+                          |
+                          v
+
+                +------------------+
+                | Tool Guardrails  |
+                | Policy Engine    |
+                +------------------+
+                          |
+        -----------------------------------------
+        |                    |                  |
+        v                    v                  v
+
++----------------+  +----------------+  +----------------+
+| Seller MCP     |  | Amazon SP-API  |  | Amazon Ads MCP |
+| Cost/Inventory |  | Orders/Catalog |  | Campaigns      |
++----------------+  +----------------+  +----------------+
+
+                          |
+                          v
+                +------------------+
+                | Approval Gateway |
+                | Money / PII      |
+                +------------------+
+                          |
+                    Approved?
+                    /      \
+                  Yes      No
+                   |        |
+                   v        v
+
+             Execute Tool  Reject
+
+                          |
+                          v
+                +------------------+
+                | Output Guardrails|
+                +------------------+
+                          |
+                          v
+                        User
+1. Discovery
+Decision
+Use MCP tool discovery instead of hardcoding APIs.
+
+Why
+New Amazon capabilities can be added without changing agents.
+Agents dynamically discover available tools.
+
+2.Authorization
+Decision
+
+Separate credentials per MCP server.
+
+Why
+
+Principle of least privilege.
+
+Human Approval Gates
+Decision
+
+Require approval before write actions.
+
+eaxmples
+Autonomous Reads
+
+Allowed:
+
+Read orders
+Read inventory
+Read campaigns
+Read reports
+
+Approval Required
+Launch campaign
+Increase budget
+Issue refund
+Export customer PII
+Change listing
+
+Security
+Decision
+
+PII filtering layer.
+
+Before agent receives data:
+
+Order:
+John Smith
+john@email.com
+
+Becomes:
+
+Order:
+Customer_ID_123
+
+unless explicitly approved.
+
+Summary
+
+| Domain         | Decision                          |
+| -------------- | --------------------------------- |
+| Discovery      | MCP tool discovery                |
+| Authorization  | Per-server credentials            |
+| Trust Boundary | Seller MCP vs Amazon MCP          |
+| Reads          | Autonomous                        |
+| Writes         | Human approval                    |
+| PII            | Masked by default                 |
+| Memory         | Store context, not sensitive data |
+| Observability  | Log every MCP call                |
+| Reliability    | Independent MCP servers           |
+| Governance     | Approval gateway for money/PII    |
