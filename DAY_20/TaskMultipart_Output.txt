@@ -1,0 +1,171 @@
+
+After observability
+
+
+{
+  "timestamp": 1782281197.264,
+  "trace_id": "8a069610-b88a-4e6a-b9de-34c623009277",
+  "span_id": "6ef0e266-c429-421c-9452-2a68faab8361",
+  "event": "agent_started",
+  "agent": "Planner"
+}
+{
+  "timestamp": 1782281197.423,
+  "trace_id": "8a069610-b88a-4e6a-b9de-34c623009277",
+  "span_id": "6ef0e266-c429-421c-9452-2a68faab8361",
+  "event": "agent_progress",
+  "agent": "Planner",
+  "step": 1,
+  "total_steps": 3,
+  "agent_percent": 33,
+  "pipeline_percent": 6.67,
+  "throughput": 6.3
+}
+{
+  "timestamp": 1782281197.525,
+  "trace_id": "8a069610-b88a-4e6a-b9de-34c623009277",
+  "span_id": "6ef0e266-c429-421c-9452-2a68faab8361",
+  "event": "agent_progress",
+  "agent": "Planner",
+  "step": 2,
+  "total_steps": 3,
+  "agent_percent": 66,
+  "pipeline_percent": 13.33,
+  "throughput": 7.67
+}
+{
+  "timestamp": 1782281197.585,
+  "trace_id": "8a069610-b88a-4e6a-b9de-34c623009277",
+  "span_id": "6ef0e266-c429-421c-9452-2a68faab8361",
+  "event": "agent_progress",
+  "agent": "Planner",
+  "step": 3,
+  "total_steps": 3,
+  "agent_percent": 100,
+  "pipeline_percent": 20.0,
+  "throughput": 9.35
+}
+{
+  "timestamp": 1782281197.585,
+  "trace_id": "8a069610-b88a-4e6a-b9de-34c623009277",
+  "span_id": "6ef0e266-c429-421c-9452-2a68faab8361",
+  "event": "agent_completed",
+  "agent": "Planner",
+  "duration_seconds": 0.32
+}
+{
+  "timestamp": 1782281197.585,
+  "trace_id": "8a069610-b88a-4e6a-b9de-34c623009277",
+  "span_id": "b71c8fd4-ac4b-45a5-aad9-f650bdd3f2e4",
+  "event": "agent_started",
+  "agent": "Researcher"
+}
+{
+  "timestamp": 1782281197.744,
+  "trace_id": "8a069610-b88a-4e6a-b9de-34c623009277",
+  "span_id": "b71c8fd4-ac4b-45a5-aad9-f650bdd3f2e4",
+  "event": "agent_progress",
+  "agent": "Researcher",
+  "step": 1,
+  "total_steps": 6,
+  "agent_percent": 16,
+  "pipeline_percent": 26.67,
+  "throughput": 8.33
+}
+{
+  "timestamp": 1782281197.844,
+  "trace_id": "8a069610-b88a-4e6a-b9de-34c623009277",
+  "span_id": "b71c8fd4-ac4b-45a5-aad9-f650bdd3f2e4",
+  "event": "agent_progress",
+  "agent": "Researcher",
+  "step": 2,
+  "total_steps": 6,
+  "agent_percent": 33,
+  "pipeline_percent": 33.33,
+  "throughput": 8.63
+}
+{
+  "timestamp": 1782281198.022,
+  "trace_id": "8a069610-b88a-4e6a-b9de-34c623009277",
+  "span_id": "b71c8fd4-ac4b-45a5-aad9-f650bdd3f2e4",
+  "event": "agent_progress",
+  "agent": "Researcher",
+  "step": 3,
+  "total_steps": 6,
+  "agent_percent": 50,
+  "pipeline_percent": 40.0,
+  "throughput": 7.92
+}
+{
+  "timestamp": 1782281198.35,
+  "trace_id": "8a069610-b88a-4e6a-b9de-34c623009277",
+  "span_id": "b71c8fd4-ac4b-45a5-aad9-f650bdd3f2e4",
+  "event": "agent_progress",
+  "agent": "Researcher",
+  "step": 5,
+  "total_steps": 6,
+  "agent_percent": 83,
+  "pipeline_percent": 46.67,
+  "throughput": 6.45
+}
+{
+  "timestamp": 1782281198.503,
+  "trace_id": "8a069610-b88a-4e6a-b9de-34c623009277",
+  "span_id": "b71c8fd4-ac4b-45a5-aad9-f650bdd3f2e4",
+  "event": "agent_progress",
+  "agent": "Researcher",
+  "step": 6,
+  "total_steps": 6,
+  "agent_percent": 100,
+  "pipeline_percent": 53.33,
+  "throughput": 6.46
+}
+{
+  "timestamp": 1782281198.503,
+  "trace_id": "8a069610-b88a-4e6a-b9de-34c623009277",
+  "span_id": "b71c8fd4-ac4b-45a5-aad9-f650bdd3f2e4",
+  "event": "agent_completed",
+  "agent": "Researcher",
+  "duration_seconds": 0.92
+}
+{
+  "timestamp": 1782281198.503,
+  "trace_id": "8a069610-b88a-4e6a-b9de-34c623009277",
+  "span_id": "61519951-1d09-47b2-b472-1d57ab503152",
+  "event": "agent_started",
+  "agent": "Writer"
+}
+{
+  "timestamp": 1782281198.578,
+  "trace_id": "8a069610-b88a-4e6a-b9de-34c623009277",
+  "span_id": "61519951-1d09-47b2-b472-1d57ab503152",
+  "event": "agent_progress",
+  "agent": "Writer",
+  "step": 1,
+  "total_steps": 4,
+  "agent_percent": 25,
+  "pipeline_percent": 60.0,
+  "throughput": 6.85
+}
+{
+  "timestamp": 1782281198.638,
+  "trace_id": "8a069610-b88a-4e6a-b9de-34c623009277",
+  "span_id": "61519951-1d09-47b2-b472-1d57ab503152",
+  "event": "agent_failed",
+  "agent": "Writer",
+  "failed_step": 2,
+  "error": "Writer failed at step 2",
+  "pipeline_percent": 60.0
+}
+{
+  "timestamp": 1782281198.638,
+  "trace_id": "8a069610-b88a-4e6a-b9de-34c623009277",
+  "event": "run_summary",
+  "status": "FAILED",
+  "total_duration_seconds": 1.37,
+  "agents_completed": [
+    "Planner",
+    "Researcher"
+  ],
+  "failed_agent": "Writer"
+}
