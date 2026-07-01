@@ -1,0 +1,29 @@
+name: Deploy to Azure VM
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.AZURE_VM_SSH_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H ${{ secrets.AZURE_VM_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Deploy to Azure VM
+        run: |
+          ssh -i ~/.ssh/id_ed25519 ${{ secrets.AZURE_VM_USER }}@${{ secrets.AZURE_VM_HOST }} << 'EOF'
+            cd ~/production
+            git pull origin main
+            sudo docker compose up --build -d
+          EOF
